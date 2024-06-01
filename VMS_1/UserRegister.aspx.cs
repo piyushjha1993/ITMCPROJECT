@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Web;
 using System.Web.UI;
@@ -19,7 +20,8 @@ namespace VMS_1
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
 
-            string cs = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=SSPI;Encrypt=False";
+            //string cs = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=SSPI;Encrypt=False";
+            string cs = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
             using (SqlConnection con = new SqlConnection(cs))
             {
                 // Check if user with the same NUD ID already exists
@@ -35,7 +37,7 @@ namespace VMS_1
                 }
 
                 // Insert new user record
-                SqlCommand cmd = new SqlCommand("INSERT INTO usermaster(Name, Rank, Designation, NudId, Password,SecretQuestion, Answer) VALUES(@Name, @Rank, @Designation, @NudID, @Password, @SecretQuestion, @Answer)", con);
+                SqlCommand cmd = new SqlCommand("INSERT INTO usermaster(Name, Rank, Designation, NudId, Password,SecretQuestion, Answer, Role) VALUES(@Name, @Rank, @Designation, @NudID, @Password, @SecretQuestion, @Answer, @Role)", con);
                 cmd.CommandType = System.Data.CommandType.Text;
                 cmd.Parameters.AddWithValue("@Name", Name.Text);
                 cmd.Parameters.AddWithValue("@Rank", Rank.SelectedValue);
@@ -43,6 +45,7 @@ namespace VMS_1
                 cmd.Parameters.AddWithValue("@NudID", NudID.Text);
                 cmd.Parameters.AddWithValue("@Password", Password.Text);
                 cmd.Parameters.AddWithValue("@SecretQuestion", SecretQuestion.SelectedValue);
+                cmd.Parameters.AddWithValue("@Role", Role.SelectedValue);
                 cmd.Parameters.AddWithValue("@Answer", Answer.Text);
                 if (cmd.ExecuteNonQuery() == 1)
                 {

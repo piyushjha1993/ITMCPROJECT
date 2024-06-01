@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web;
 using System.Web.Script.Services;
+using System.Web.Security;
 using System.Web.Services;
 using System.Web.UI.WebControls;
 
@@ -13,6 +15,10 @@ namespace VMS_1
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!HttpContext.Current.User.Identity.IsAuthenticated)
+            {
+                FormsAuthentication.RedirectToLoginPage();
+            }
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
             Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
             Response.Cache.SetNoStore();
@@ -33,7 +39,8 @@ namespace VMS_1
         public static string[] GetItemNames()
         {
             List<string> itemNames = new List<string>();
-            string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+            //string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+            string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
             string query = "SELECT AltItemName FROM AlternateItem ORDER BY AltItemName ASC";
 
             try
@@ -62,7 +69,8 @@ namespace VMS_1
         {
             try
             {
-                string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+                //string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+                string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
 
                 string[] itemNames = Request.Form.GetValues("itemname");
                 string[] quantities = Request.Form.GetValues("qty");
@@ -127,7 +135,8 @@ namespace VMS_1
         public static List<string[]> GetFilteredData(string monthYear)
         {
             List<string[]> data = new List<string[]>();
-            string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+            //string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+            string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
 
             try
             {
@@ -163,7 +172,8 @@ namespace VMS_1
 
         private void BindGridView()
         {
-            string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+            //string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+            string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
 
             try
             {
@@ -175,8 +185,13 @@ namespace VMS_1
                     DataTable dt = new DataTable();
                     da.Fill(dt);
 
+<<<<<<< Updated upstream
                     //GridView1.DataSource = dt;
                     //GridView1.DataBind();
+=======
+                    GridView.DataSource = dt;
+                    GridView.DataBind();
+>>>>>>> Stashed changes
                 }
             }
             catch (Exception ex)

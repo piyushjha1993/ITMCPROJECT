@@ -1,16 +1,24 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web;
+using System.Web.Security;
 using System.Web.UI.WebControls;
 
 namespace VMS_1
 {
     public partial class ItemMaster : System.Web.UI.Page
     {
-        private string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+        //private string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+        private string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!HttpContext.Current.User.Identity.IsAuthenticated)
+            {
+                FormsAuthentication.RedirectToLoginPage();
+            }
             if (!IsPostBack)
             {
                 LoadGridView();

@@ -45,15 +45,15 @@
             align-items: center;
         }
 
-        .theme-selector label {
-            color: #ffffff;
-            margin-right: 5px;
-        }
+            .theme-selector label {
+                color: #ffffff;
+                margin-right: 5px;
+            }
 
-        .theme-selector select {
-            padding: 5px;
-            border-radius: 4px;
-        }
+            .theme-selector select {
+                padding: 5px;
+                border-radius: 4px;
+            }
 
         form {
             background-color: #ffffff;
@@ -94,7 +94,7 @@
             transition: border-color 0.3s;
         }
 
-   
+
         input[type="button"] {
             background-color: var(--primary-color);
             color: #ffffff;
@@ -109,9 +109,9 @@
             margin: 0 auto;
         }
 
-        input[type="button"]:hover {
-            background-color: var(--hover-color);
-        }
+            input[type="button"]:hover {
+                background-color: var(--hover-color);
+            }
 
         .error {
             color: red;
@@ -119,9 +119,9 @@
             font-size: 14px;
         }
 
-        .error:focus {
-            border-color: red;
-        }
+            .error:focus {
+                border-color: red;
+            }
     </style>
 </head>
 <body>
@@ -159,7 +159,7 @@
         </div>
         <div>
             <label for="txtDesignation">Designation:</label>
-            <asp:TextBox ID="Designation" runat="server" placeholder="Enter your designation" required></asp:TextBox>
+            <asp:TextBox ID="Designation" runat="server" placeholder="Enter your designation" MaxLength="10" required></asp:TextBox>
         </div>
         <div>
             <label for="txtNudID">NUD ID:</label>
@@ -171,13 +171,22 @@
             <asp:RegularExpressionValidator ID="PasswordValidator" runat="server" ControlToValidate="Password" ErrorMessage="Password should be minimum 8 characters with at least one letter, one numeral, and one special character" ValidationExpression="^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$"></asp:RegularExpressionValidator>
         </div>
         <div>
+            <label for="role">Role:</label>
+            <asp:DropDownList ID="Role" runat="server" Width="100%">
+                <asp:ListItem Text="-- Select Role --"></asp:ListItem>
+                <asp:ListItem Text="User"></asp:ListItem>
+                <asp:ListItem Text="Co"></asp:ListItem>
+                <asp:ListItem Text="Logistic Officer"></asp:ListItem>
+            </asp:DropDownList>
+        </div>
+        <div>
             <label for="ddlSecretQuestion">Select Secret Question for password recovery:</label>
             <asp:DropDownList ID="SecretQuestion" runat="server" Width="100%">
-                <asp:ListItem Text="-- Select Secret Question --" ></asp:ListItem>
-                <asp:ListItem Text="Name of your First School" ></asp:ListItem>
-                <asp:ListItem Text="Mother's Maiden Name" ></asp:ListItem>
-                <asp:ListItem Text="Unit of first appointment" ></asp:ListItem>
-                <asp:ListItem Text="Name of favourite book" ></asp:ListItem>
+                <asp:ListItem Text="-- Select Secret Question --"></asp:ListItem>
+                <asp:ListItem Text="Name of your First School"></asp:ListItem>
+                <asp:ListItem Text="Mother's Maiden Name"></asp:ListItem>
+                <asp:ListItem Text="Unit of first appointment"></asp:ListItem>
+                <asp:ListItem Text="Name of favourite book"></asp:ListItem>
             </asp:DropDownList>
         </div>
         <div>

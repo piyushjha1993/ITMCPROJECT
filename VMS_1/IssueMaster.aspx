@@ -1,97 +1,8 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="IssueMaster.aspx.cs" Inherits="VMS_1.IssueMaster" EnableEventValidation="false" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" MasterPageFile="~/Site.Master" CodeBehind="IssueMaster.aspx.cs" Inherits="VMS_1.IssueMaster" EnableEventValidation="false" %>
 
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title>Issue Module</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background-color 0.3s, color 0.3s;
-            position: relative;
-            background-color: #3498db;
-            color: #000;
-        }
-
-        .dark-theme {
-            background-color: #333;
-            color: #fff;
-        }
-
-        .form-control {
-            width: 100%;
-            max-width: none;
-        }
-
-        .table {
-            color: #000;
-        }
-
-            .table.dark-theme {
-                color: #fff;
-            }
-
-        .theme-selector {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 9999;
-            background-color: #fff;
-            padding: 5px 10px;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-
-            .theme-selector label {
-                margin-right: 5px;
-            }
-
-            .theme-selector select {
-                padding: 5px;
-                border-radius: 4px;
-            }
-
-        .container {
-            margin-top: 50px;
-        }
-
-        .dark-theme-text {
-            color: #fff;
-        }
-
-        .heading {
-            color: #000;
-        }
-
-            .heading.dark-theme {
-                color: #fff;
-            }
-
-        .auto-style2 {
-            display: block;
-            font-size: 1rem;
-            font-weight: 400;
-            line-height: 1.5;
-            color: #495057;
-            background-clip: padding-box;
-            border-radius: .25rem;
-            transition: none;
-            max-width: none;
-            border: 1px solid #ced4da;
-            background-color: #fff;
-        }
-    </style>
-</head>
-<body>
-    <div class="theme-selector">
-        <label for="ddlTheme">Choose Theme:</label>
-        <select id="ddlTheme" onchange="setTheme(this.value)">
-            <option value="blue">Blue</option>
-            <option value="dark">Dark</option>
-        </select>
-    </div>
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container">
+<<<<<<< Updated upstream
         <h1 class="mt-4">Victualling Management System</h1>
     </div>
     <div class="container">
@@ -102,16 +13,29 @@
                 <option value="sailor">Sailor</option>
             </select>
         </div>
+=======
+>>>>>>> Stashed changes
         <h2 class="mt-4">Issue Module - Officers</h2>
 
         <form id="issueForm" runat="server">
+            <div>
+                <label for="userType">Select User Type:</label>
+                <select id="userType" onchange="toggleUserType()" name="userrole" class="form-control" style="width: 100px;">
+                    <option value="officer">Officer</option>
+                    <option value="sailor">Sailor</option>
+                </select>
+            </div>
             <input type="hidden" id="ScalAmount_Val" />
             <input type="hidden" id="ItemCategory_Val" />
+<<<<<<< Updated upstream
             <input type="hidden" id="userRole" name="userrole" />
             <input type="hidden" id="entitledStrength" name="entitledstrength" />
             <div class="text-right">
+=======
+           <%-- <div class="text-right">
+>>>>>>> Stashed changes
                 <asp:LinkButton ID="DashboardButton" runat="server" Text="Go to Dashboard" CssClass="btn btn-info" PostBackUrl="~/Dashboard.aspx"></asp:LinkButton>
-            </div>
+            </div>--%>
             <div class="table-responsive">
                 <table class="table" id="issueTable">
                     <thead>
@@ -449,5 +373,4 @@
                 });
         }
     </script>
-</body>
-</html>
+</asp:Content>

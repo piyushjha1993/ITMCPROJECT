@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using System.Web;
+using System.Web.Security;
 using System.Web.UI.WebControls;
 
 namespace VMS_1
@@ -11,6 +13,10 @@ namespace VMS_1
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!HttpContext.Current.User.Identity.IsAuthenticated)
+            {
+                FormsAuthentication.RedirectToLoginPage();
+            }
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
             Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
             Response.Cache.SetNoStore();
@@ -29,8 +35,8 @@ namespace VMS_1
         {
             try
             {
-                string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
-
+                //string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+                string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
                 // Get data from the form
                 string[] dates = Request.Form.GetValues("date");
                 string[] vegOfficers = Request.Form.GetValues("vegOfficer");
@@ -91,7 +97,8 @@ namespace VMS_1
         {
             try
             {
-                string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+                //string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+                string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
                 string firstSubmittedDate = Request.Form.GetValues("date")[0];
                 DateTime dateTime = DateTime.Parse(firstSubmittedDate);
                 string monthFilter = dateTime.ToString("yyyy-MM");

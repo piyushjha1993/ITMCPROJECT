@@ -1,107 +1,21 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Dashboard.aspx.cs" Inherits="VMS_1.Dashboard" %>
+﻿<%@ Page Title="Dashboard" Language="C#" AutoEventWireup="true" MasterPageFile="~/Site.Master" CodeBehind="Dashboard.aspx.cs" Inherits="VMS_1.Dashboard" %>
+<%@ Import Namespace="System.Web.Security" %>
 
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head runat="server">
-    <title>Item Master</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background-color 0.3s, color 0.3s;
-            position: relative;
-            background-color: #3498db; 
-            color: #000; 
-        }
-
-        .dark-theme {
-            color: #fff; 
-        }
-
-        .form-control {
-            width: 100%; 
-            max-width: none; 
-        }
-
-        .table {
-            color: #000; 
-        }
-
-        .table.dark-theme {
-            color: #fff; 
-        }
-
-        .theme-selector {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 9999;
-            background-color: #fff;
-            padding: 5px 10px;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .theme-selector label {
-            margin-right: 5px;
-        }
-
-        .theme-selector select {
-            padding: 5px;
-            border-radius: 4px;
-        }
-
-        .container {
-            margin-top: 50px;
-        }
-
-        .dark-theme-text {
-            color: #fff;
-        }
-
-        .heading {
-            color: #000;
-        }
-
-        .heading.dark-theme {
-            color: #fff;
-        }
-        .auto-style1 {
-            margin-top: 1.5rem;
-            font-size: large;
-            color: #FF3300;
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <div class="theme-selector">
-        <label for="ddlTheme">Choose Theme:</label>
-        <select id="ddlTheme" onchange="setTheme(this.value)">
-            <option value="blue">Blue</option>
-            <option value="dark">Dark</option>
-        </select>
-    </div>   
-         <form id="form1" runat="server">
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+    <form id="form1" runat="server">
         <div class="container">
-                 <h1 class="mt-4">Victualling Management System</h1>
-        </div>
-            <div class="container">
             <h2 class="mt-4">Dashboard</h2>
             <p class="mt-4">&nbsp;</p>
             <p class="mt-4">&nbsp;</p>
-                <div class="form-group">
+            <div class="form-group">
                 <label for="monthYearPicker">Select Month and Year:</label>
                 <input type="month" id="monthYearPicker" runat="server" class="form-control date-picker" />
-    </div>
-    <asp:Button ID="ExportToExcelButton" runat="server" Text="Export to Excel" OnClick="ExportToExcelButton_Click" CssClass="btn btn-primary" />
-</div>
-    <asp:Label ID="lblStatus" runat="server"></asp:Label>
+            </div>
+            <asp:Button ID="ExportToExcelButton" runat="server" Text="Export to Excel" OnClick="ExportToExcelButton_Click" CssClass="btn btn-primary" />
+        </div>
+        <asp:Label ID="lblStatus" runat="server"></asp:Label>
+    </form>
 
-  </div>
-        </form>
-    
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
@@ -144,5 +58,4 @@
             row.parentNode.removeChild(row);
         }
     </script>
-</body>
-</html>
+</asp:Content>

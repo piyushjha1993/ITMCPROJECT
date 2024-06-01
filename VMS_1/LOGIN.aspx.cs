@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Configuration;
 using System.Data.SqlClient;
 using System.Web;
+using System.Web.Security;
 using System.Web.UI;
 
 namespace VMS_1
@@ -20,10 +22,14 @@ namespace VMS_1
         {
             string username = UserName.Text;
             string password = Password.Text;
+            string role;
+            string name;
 
-            if (ValidateUser(username, password))
+            if (ValidateUser(username, password, out role, out name))
             {
-                // If user is valid, redirect to Home.aspx
+                Session["UserName"] = name;
+                Session["Role"] = role;
+                FormsAuthentication.SetAuthCookie(username, false);
                 Response.Redirect("Dashboard.aspx");
             }
             else
@@ -34,9 +40,10 @@ namespace VMS_1
                 UserName.Focus();
             }
         }
-        private bool ValidateUser(string username, string password)
+
+        private bool ValidateUser(string username, string password, out string role, out string name)
         {
-            string connectionString = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=SSPI";
+            string connectionString = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
             string query = "SELECT COUNT(*) FROM usermaster WHERE NudId = @Username AND Password = @Password";
 
             using (SqlConnection con = new SqlConnection(connectionString))
@@ -46,13 +53,49 @@ namespace VMS_1
                 cmd.Parameters.AddWithValue("@Username", username);
                 cmd.Parameters.AddWithValue("@Password", password);
 
-                // Execute the query and retrieve the result
                 int count = (int)cmd.ExecuteScalar();
 
-                // If count is greater than 0, user is valid
-                return count > 0;
+                if (count > 0)
+                {
+                    role = null;
+                    name = null;
+
+                    string roleQuery = "SELECT Role FROM usermaster WHERE NudId = @Username AND Password = @Password";
+                    string nameQuery = "SELECT name FROM usermaster WHERE NudId = @Username AND Password = @Password";
+
+                    using (SqlCommand roleCmd = new SqlCommand(roleQuery, con))
+                    using (SqlCommand nameCmd = new SqlCommand(nameQuery, con))
+                    {
+                        roleCmd.Parameters.AddWithValue("@Username", username);
+                        roleCmd.Parameters.AddWithValue("@Password", password);
+
+                        object roleObj = roleCmd.ExecuteScalar();
+                        if (roleObj != null)
+                        {
+                            role = roleObj.ToString();
+                        }
+
+                        nameCmd.Parameters.AddWithValue("@Username", username);
+                        nameCmd.Parameters.AddWithValue("@Password", password);
+
+                        object nameObj = nameCmd.ExecuteScalar();
+                        if (nameObj != null)
+                        {
+                            name = nameObj.ToString();
+                        }
+
+                        return true;
+                    }
+                }
             }
+
+            role = null;
+            name = null;
+            return false;
         }
+
+
+
     }
 }
 

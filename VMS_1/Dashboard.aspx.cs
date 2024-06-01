@@ -4,6 +4,9 @@ using System.Data.SqlClient;
 using OfficeOpenXml;
 using System.IO;
 using OfficeOpenXml.Style;
+using System.Configuration;
+using System.Web.Security;
+using System.Web;
 
 namespace VMS_1
 {
@@ -11,7 +14,10 @@ namespace VMS_1
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            if (!HttpContext.Current.User.Identity.IsAuthenticated)
+            {
+                FormsAuthentication.RedirectToLoginPage();
+            }
         }
 
         protected void ExportToExcelButton_Click(object sender, EventArgs e)
@@ -198,7 +204,8 @@ namespace VMS_1
 
         private DataTable FetchStrengthData(string monthYear)
         {
-            string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+            //string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+            string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
             DataTable dt = new DataTable();
 
             using (SqlConnection conn = new SqlConnection(connStr))

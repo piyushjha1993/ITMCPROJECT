@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web;
+using System.Web.Security;
 using System.Web.Services;
 using System.Web.UI.WebControls;
 
@@ -14,6 +15,10 @@ namespace VMS_1
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!HttpContext.Current.User.Identity.IsAuthenticated)
+            {
+                FormsAuthentication.RedirectToLoginPage();
+            }
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
             Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
             Response.Cache.SetNoStore();
@@ -61,7 +66,8 @@ namespace VMS_1
         [WebMethod]
         public static List<object> GetItemCategories()
         {
-            string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+            //string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+            string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
             string query = "SELECT * FROM Items";
             DataTable dt = new DataTable();
 
@@ -94,7 +100,8 @@ namespace VMS_1
             List<string> itemNames = new List<string>();
 
             // Your SQL query to fetch item names based on the selected category
-            string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+            //string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+            string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
             string query = "SELECT * FROM AlternateItem where ItemID = @Category";
 
             using (SqlConnection conn = new SqlConnection(connStr))
@@ -116,47 +123,12 @@ namespace VMS_1
         }
 
 
-        //private void PopulateItemNamesDropdown(string selectedCategory)
-        //{
-        //    string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
-        //    string query = "SELECT ItemName FROM Items WHERE CategoryID = (SELECT CategoryID FROM ItemCategories WHERE CategoryName = @CategoryName)";
-
-        //    try
-        //    {
-        //        using (SqlConnection conn = new SqlConnection(connStr))
-        //        {
-        //            conn.Open();
-        //            SqlCommand cmd = new SqlCommand(query, conn);
-        //            cmd.Parameters.AddWithValue("@CategoryName", selectedCategory);
-        //            SqlDataReader reader = cmd.ExecuteReader();
-
-        //            while (reader.Read())
-        //            {
-        //                string itemName = reader["ItemName"].ToString();
-        //                ListItem item = new ListItem(itemName);
-        //                itemname.Items.Add(item);
-        //            }
-
-        //            reader.Close();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        lblStatus.Text = "An error occurred while populating item names dropdown: " + ex.Message;
-        //    }
-        //}
-
-        //protected void itemcategory_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-        //    itemname.Items.Clear();
-        //    PopulateItemNamesDropdown(itemcategory.SelectedItem.Text);
-        //}
-
         protected void SubmitButton_Click(object sender, EventArgs e)
         {
             try
             {
-                string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+                //string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
+                string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
 
                 string[] date = Request.Form.GetValues("date");
                 string[] itemcategory = Request.Form.GetValues("itemcategory");

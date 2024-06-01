@@ -97,8 +97,8 @@
     <div class="container">
         <div>
             <label for="userType">Select User Type:</label>
-            <select id="userType" onchange="toggleUserType()" name="userrole" class="form-control" style="width: 100px;">
-                <option value="officer">Officer</option>
+            <select id="userType" onchange="toggleUserType()" class="form-control" style="width: 100px;">
+                <option value="officer" selected>Officer</option>
                 <option value="sailor">Sailor</option>
             </select>
         </div>
@@ -107,6 +107,8 @@
         <form id="issueForm" runat="server">
             <input type="hidden" id="ScalAmount_Val" />
             <input type="hidden" id="ItemCategory_Val" />
+            <input type="hidden" id="userRole" name="userrole" />
+            <input type="hidden" id="entitledStrength" name="entitledstrength" />
             <div class="text-right">
                 <asp:LinkButton ID="DashboardButton" runat="server" Text="Go to Dashboard" CssClass="btn btn-info" PostBackUrl="~/Dashboard.aspx"></asp:LinkButton>
             </div>
@@ -148,7 +150,7 @@
                                 <input type="text" class="form-control" name="Strength" />
                             </td>
                             <td>
-                                <label id="EntitledStrength" name="entitledstrength" class="form-control"></label>
+                                <input type="text" id="EntitledStrength" class="form-control" disabled></input>
                                 <%--<asp:Label ID="EntitledStrength" runat="server" Text="" class="form-control"></asp:Label>--%>
                             </td>
                             <td>
@@ -178,6 +180,10 @@
             <div>
                 <h2 class="mt-4">Entered Data</h2>
             </div>
+            <div>
+                <asp:GridView ID="GridView3" runat="server" CssClass="table table-bordered table-striped">
+                </asp:GridView>
+            </div>
         </form>
     </div>
 
@@ -193,8 +199,10 @@
             var heading = document.querySelector('.container h2');
 
             if (userType === "officer") {
+                $('#userRole').val("officer");
                 heading.textContent = "Issue Module - Officers";
             } else if (userType === "sailor") {
+                $('#userRole').val("sailor");
                 heading.textContent = "Issue Module - Sailors";
             }
         }
@@ -221,11 +229,12 @@
 
             if (!isNaN(strengthValue)) {
                 var entitledStrength = strengthValue * scaleAmount;
-                var id = 'EntitledStrength'; // Assuming 'EntitledStrength' is the ID of the element to be updated
+                var id = 'EntitledStrength';
+                $('#entitledStrength').val(entitledStrength);
 
-                // Check if the element ID is not equal to 'EntitledStrength' + '_' + rowSequence
                 if (id != 'EntitledStrength' + '_' + rowSequence) {
                     document.getElementById('EntitledStrength').textContent = entitledStrength;
+                    $('#EntitledStrength').val(entitledStrength);
                 } else {
                     document.getElementById('EntitledStrength' + '_' + rowSequence).textContent = entitledStrength;
                 }
@@ -236,9 +245,11 @@
         });
 
         function setTheme(theme) {
+            var gridView = document.getElementById("GridView3");
             if (theme === "blue") {
                 document.body.style.backgroundColor = '#3498db';
                 document.body.classList.remove('dark-theme');
+                gridView.classList.remove('dark-theme-text');
                 document.querySelectorAll('.heading').forEach(function (element) {
                     element.classList.remove('dark-theme');
                 });
@@ -246,6 +257,7 @@
             } else if (theme === "dark") {
                 document.body.style.backgroundColor = '#333';
                 document.body.classList.add('dark-theme');
+                gridView.classList.add('dark-theme-text');
                 document.querySelectorAll('.heading').forEach(function (element) {
                     element.classList.add('dark-theme');
                 });
@@ -261,43 +273,40 @@
             var newRow = document.createElement("tr");
             var selectedDate = document.querySelector('input[type="date"][name="date"]').value;
             newRow.innerHTML = `
-        <td>
-            <input type="date" class="form-control" name="date" value="${selectedDate}" disabled required />
-        </td>
-        <td>
-             <select class="form-control itemcategory" onchange="itemcategory_SelectedIndexChanged(this)" required disabled>
-                <option value="">Select</option>
-            </select>
-        </td>
-        <td>
-        <select id="DropDownList1_${rowSequence}" class="form-control" name="itemname" required>
-            <option value="">Select</option>
-        </select>
-        </td>
-        <td>
-            <input type="text" class="form-control strength-input" name="Strength" id="Strength_${rowSequence}" />
-            
-        </td>
-        <td>
-            <label class="form-control entitled_strength" id="EntitledStrength_${rowSequence}"></label>
-        </td>
-        <td>
-            <input type="text" class="form-control" name="Qtyissued" id="Qtyissued_${rowSequence}" />
-        </td>
-        <td>
-            <select class="form-control" name="denom" required id="denom_${rowSequence}">
-                <option value="">Select Denom</option>
-                <option value="Kgs">Kgs</option>
-                <option value="Ltr">Ltr</option>
-                <option value="Nos">Nos</option>
-                <option value="Others">Others</option>
-            </select>
-        </td>
-        <td>
-            <button type="button" class="btn btn-danger" onclick="deleteRow(this)">Delete</button>
-        </td>`;
-
-
+                            <td>
+                                <input type="date" class="form-control" name="date" value="${selectedDate}" disabled required />
+                            </td>
+                            <td>
+                                 <select class="form-control itemcategory" onchange="itemcategory_SelectedIndexChanged(this)" required disabled>
+                                    <option value="">Select</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select id="DropDownList1_${rowSequence}" class="form-control" name="itemname" required>
+                                    <option value="">Select</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control strength-input" name="Strength" id="Strength_${rowSequence}" />
+                            </td>
+                            <td>
+                                <label class="form-control entitled_strength" id="EntitledStrength_${rowSequence}"></label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" name="Qtyissued" id="Qtyissued_${rowSequence}" />
+                            </td>
+                            <td>
+                                <select class="form-control" name="denom" required id="denom_${rowSequence}">
+                                    <option value="">Select Denom</option>
+                                    <option value="Kgs">Kgs</option>
+                                    <option value="Ltr">Ltr</option>
+                                    <option value="Nos">Nos</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" onclick="deleteRow(this)">Delete</button>
+                            </td>`;
 
             tableBody.appendChild(newRow);
 

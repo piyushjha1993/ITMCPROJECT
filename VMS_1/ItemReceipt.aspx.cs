@@ -175,8 +175,8 @@ namespace VMS_1
                     DataTable dt = new DataTable();
                     da.Fill(dt);
 
-                    GridView1.DataSource = dt;
-                    GridView1.DataBind();
+                    //GridView1.DataSource = dt;
+                    //GridView1.DataBind();
                 }
             }
             catch (Exception ex)

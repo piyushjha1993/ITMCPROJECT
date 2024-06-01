@@ -185,13 +185,10 @@ namespace VMS_1
                     DataTable dt = new DataTable();
                     da.Fill(dt);
 
-<<<<<<< Updated upstream
                     //GridView1.DataSource = dt;
                     //GridView1.DataBind();
-=======
                     GridView.DataSource = dt;
                     GridView.DataBind();
->>>>>>> Stashed changes
                 }
             }
             catch (Exception ex)

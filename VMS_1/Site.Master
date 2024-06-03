@@ -1,3 +1,5 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="VMS_1.Site" %>
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
@@ -58,6 +60,7 @@
 
         .container {
             margin-top: 50px;
+            max-width: 1500px;
         }
 
         .dark-theme-text {
@@ -94,7 +97,41 @@
                         </div>
                     </li>
                 </ul>
-                <a class="btn" href="#" onclick="logout()">Log Out</a>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle dark-theme-text font-weight-bold" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Extra Issue
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="Divers_ExtraIssue.aspx">Divers</a>
+                            <a class="dropdown-item" href="PestControl_ExtraIssue.aspx">Pest Control</a>
+                            <a class="dropdown-item" href="LeadPoisioning_ExtraIssue.aspx">Lead Poisioning</a>
+                            <a class="dropdown-item" href="LimeandSugar_ExtraIssue.aspx">Lime And Sugar</a>
+                            <a class="dropdown-item" href="LimeFresh_ExtraIssue.aspx">Lime Fresh</a>
+                            <a class="dropdown-item" href="MilkSugarandTea_ExtraIssue.aspx">Milk, Sugar and Tea</a>
+                            <a class="dropdown-item" href="RationIssueOnPayment.aspx">Ration Issue On Payment</a>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <%
+                        if (IsUserLoggedIn() && IsUserInRole("Admin"))
+                        {
+                    %>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle dark-theme-text font-weight-bold" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">User</a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="Users.aspx">User List</a>
+                        </div>
+                    </li>
+                    <%
+                        }
+                    %>
+                </ul>
+
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                </div>
+                <a class="btn" href="~/LOGIN.aspx?m=logout" runat="server">Logout
+                </a>
                 <div <%--class="theme-selector"--%> style="margin-left: auto;">
                     <%--<label for="ddlTheme">Choose Theme:</label>--%>
                     <select id="ddlTheme" onchange="setTheme(this.value)" class="form-control">
@@ -111,18 +148,19 @@
         </asp:ContentPlaceHolder>
     </main>
 
-    <script>
-    function logout() {
+    <%
+        bool IsUserLoggedIn()
+        {
+            // Check if the user is logged in
+            return HttpContext.Current.Session["Role"] != null;
+        }
 
-        // Sign out the user
-        document.cookie = "ASP.NET_SessionId=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        document.cookie = ".ASPXAUTH=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-        // Redirect to the login page
-        window.location.href = "Login.aspx";
-    }
-    </script>
-
-
+        bool IsUserInRole(string role)
+        {
+            // Check if the user is in the specified role
+            return HttpContext.Current.Session["Role"] != null && HttpContext.Current.Session["Role"].ToString() == role;
+        }
+    %>
 </body>
 </html>
+

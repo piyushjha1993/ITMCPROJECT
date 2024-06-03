@@ -2,3 +2,9 @@
 VMS_1/.vs/VMS_1/config/applicationhost.config
 *.vsidx
 VMS_1/.vs/VMS_1/v17/.suo
+*.vsidx
+VMS_1/.vs/VMS_1/v17/.suo
+*.dll
+*.pdb
+VMS_1/obj/Debug/VMS_1.dll
+VMS_1/obj/Debug/VMS_1.pdb

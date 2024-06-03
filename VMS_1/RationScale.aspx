@@ -20,25 +20,32 @@
                     <tbody id="tableBody" runat="server">
                         <tr>
                             <td>
-                                <input type="text" class="form-control" name="itemName" required /></td>
+                                <select class="form-control itemname" id="itemname" name="itemname" required>
+                                    <option value="">Select</option>
+                                </select>
+                            </td>
                             <td>
                                 <input type="text" class="form-control" name="rate" required pattern="^\d+(\.\d+)?$" />Default Value 0</td>
 
                             <td>
                                 <button type="button" class="btn btn-danger" onclick="deleteRow(this)">Delete</button></td>
-
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="text-center">
                 <button type="button" class="btn btn-primary mr-2" onclick="addRow()">Add Row</button>
-                <%--<asp:Button ID="SubmitButton" runat="server" Text="Submit" OnClick="SubmitButton_Click" CssClass="btn btn-success mr-2" Width="107px" Height="38px" />--%>
+                <asp:Button ID="SubmitButton" runat="server" Text="Submit" OnClick="SubmitButton_Click" CssClass="btn btn-success mr-2" Width="107px" Height="38px" />
             </div>
             <asp:Label ID="lblStatus" runat="server" Text=""></asp:Label>
 
-            <asp:GridView ID="GridView1" runat="server" CssClass="table table-bordered table-striped">
-            </asp:GridView>
+            <div>
+                <h2 class="mt-4">Entered Data</h2>
+            </div>
+            <div>
+                <asp:GridView ID="GridViewRationScale" runat="server" CssClass="table table-bordered table-striped">
+                </asp:GridView>
+            </div>
         </form>
     </div>
 
@@ -46,6 +53,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
+        $(document).ready(function () {
+            fetchItems('');
+        });
         function setTheme(theme) {
             var gridView = document.getElementById("GridView1");
 
@@ -68,19 +78,60 @@
             }
         }
 
+        var rowSequence = 0;
         function addRow() {
-            var tableBody = document.getElementById("tableBody");
+            var tableBody = document.getElementById("MainContent_tableBody");
             var newRow = document.createElement("tr");
-            newRow.innerHTML = `<td><input type="text" class="form-control" name="itemName" required /></td>
+            newRow.innerHTML = `<td>
+                    <select class="form-control itemname" id="itemname_${rowSequence}" name="itemname" required>
+                        <option value="">Select</option>
+                    </select>
+                    </td>
+
     <td><input type="number" class="form-control" name="rate" required min="0" step="0.01" />Default Value 0</td>
     <td><button type="button" class="btn btn-danger" onclick="deleteRow(this)">Delete</button></td>`;
             tableBody.appendChild(newRow);
+            fetchItems(newRow);
         }
 
 
         function deleteRow(btn) {
             var row = btn.parentNode.parentNode;
             row.parentNode.removeChild(row);
+        }
+
+
+        function fetchItems(row) {
+            fetch('RationScale.aspx/GetItemNames', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.d && data.d.length) {
+                        if (row) {
+                            itemSelect = row.querySelector('.itemname');
+                        } else {
+                            itemSelect = document.getElementById('itemname');
+                        }
+
+
+                        // Clear existing options
+                        itemSelect.innerHTML = '<option value="">Select</option>';
+
+                        data.d.forEach(function (item) {
+                            var option = document.createElement('option');
+                            option.value = item.Text;
+                            option.textContent = item.Text;
+                            itemSelect.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching item names:', error);
+                });
         }
     </script>
 </asp:Content>

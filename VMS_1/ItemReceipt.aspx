@@ -3,7 +3,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
 
-    
+
     <div class="container">
         <h2 class="mt-4">Receipt Module</h2>
 
@@ -27,7 +27,7 @@
                     <tbody id="tableBody" runat="server">
                         <tr>
                             <td>
-                                <select class="form-control itemname" name="itemname" required>
+                                <select class="form-control itemname" id="itemname" name="itemname" required>
                                     <option value="">Select</option>
                                 </select>
                             </td>
@@ -92,6 +92,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js"></script>
     <script>
+        $(document).ready(function () {
+            loadItemNamesForRow('');
+        });
         function setTheme(theme) {
             var gridView = document.getElementById("GridView1");
 
@@ -113,13 +116,15 @@
                 document.querySelector('.table').classList.add('dark-theme');
             }
         }
-
+        var rowSequence = 0;
         function addRow() {
-            var tableBody = document.getElementById("tableBody");
+            var tableBody = document.getElementById("MainContent_tableBody");
             var newRow = document.createElement("tr");
-            newRow.innerHTML = `<td><select class="form-control itemname" name="itemname" required>
-                                    <option value="">Select</option>
-                                </select></td>
+            newRow.innerHTML = `
+                                 <td>
+                                      <select class="form-control itemname" name="itemname" id="itemname_${rowSequence}" required>
+                                     </select>
+                                 </td>
                                 <td><input type="text" class="form-control" name="qty" required pattern="^\\d+(\\.\\d+)?$" /></td>
                                 <td><select class="form-control" name="denom" required>
                                     <option value="">Select Denom</option>
@@ -140,6 +145,8 @@
                                 <td><button type="button" class="btn btn-danger" onclick="deleteRow(this)">Delete</button></td>`;
             tableBody.appendChild(newRow);
             loadItemNamesForRow(newRow);
+
+            rowSequence++;
         }
 
         function deleteRow(button) {
@@ -157,7 +164,13 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.d && data.d.length) {
-                        var itemSelect = row.querySelector('.itemname');
+                        var itemSelect = '';
+                        var int = rowSequence - 1;
+                        if (rowSequence > 0) {
+                            itemSelect = document.getElementById('itemname_' + int);
+                        } else {
+                            itemSelect = document.getElementById('itemname');
+                        }
                         data.d.forEach(function (item) {
                             var option = document.createElement('option');
                             option.value = item;
@@ -213,36 +226,36 @@
                     .then(data => {
                         if (data.d && data.d.length) {
                             var gridView = document.getElementById('<%= GridView.ClientID %>');
-                                gridView.innerHTML = '';
+                            gridView.innerHTML = '';
 
-                                var table = document.createElement('table');
-                                table.className = 'table table-bordered table-striped';
+                            var table = document.createElement('table');
+                            table.className = 'table table-bordered table-striped';
 
-                                var thead = document.createElement('thead');
-                                var theadRow = document.createElement('tr');
-                                ['Item Name', 'Quantity', 'Denomination', 'Received From', 'Reference No', 'Date'].forEach(function (heading) {
-                                    var th = document.createElement('th');
-                                    th.textContent = heading;
-                                    theadRow.appendChild(th);
+                            var thead = document.createElement('thead');
+                            var theadRow = document.createElement('tr');
+                            ['Item Name', 'Quantity', 'Denomination', 'Received From', 'Reference No', 'Date'].forEach(function (heading) {
+                                var th = document.createElement('th');
+                                th.textContent = heading;
+                                theadRow.appendChild(th);
+                            });
+                            thead.appendChild(theadRow);
+                            table.appendChild(thead);
+
+                            var tbody = document.createElement('tbody');
+                            data.d.forEach(function (row) {
+                                var tr = document.createElement('tr');
+                                row.forEach(function (cell) {
+                                    var td = document.createElement('td');
+                                    td.textContent = cell;
+                                    tr.appendChild(td);
                                 });
-                                thead.appendChild(theadRow);
-                                table.appendChild(thead);
+                                tbody.appendChild(tr);
+                            });
+                            table.appendChild(tbody);
 
-                                var tbody = document.createElement('tbody');
-                                data.d.forEach(function (row) {
-                                    var tr = document.createElement('tr');
-                                    row.forEach(function (cell) {
-                                        var td = document.createElement('td');
-                                        td.textContent = cell;
-                                        tr.appendChild(td);
-                                    });
-                                    tbody.appendChild(tr);
-                                });
-                                table.appendChild(tbody);
-
-                                gridView.appendChild(table);
-                            }
-                        })
+                            gridView.appendChild(table);
+                        }
+                    })
                     .catch(error => {
                         console.error('Error fetching filtered data:', error);
                     });

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -13,6 +14,7 @@ namespace VMS_1
 {
     public partial class IssueMaster : System.Web.UI.Page
     {
+        private string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!HttpContext.Current.User.Identity.IsAuthenticated)
@@ -26,42 +28,12 @@ namespace VMS_1
 
             if (!IsPostBack)
             {
-                if (ViewState["DataTable1"] == null)
-                {
-                    ViewState["DataTable1"] = new DataTable();
-                }
+                LoadGridView();
                 GetItemCategories();
             }
         }
 
-        //private void PopulateItemCategoriesDropdown()
-        //{
-        //    string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
-        //    string query = "SELECT CategoryName FROM ItemCategories";
 
-        //    try
-        //    {
-        //        using (SqlConnection conn = new SqlConnection(connStr))
-        //        {
-        //            conn.Open();
-        //            SqlCommand cmd = new SqlCommand(query, conn);
-        //            SqlDataReader reader = cmd.ExecuteReader();
-
-        //            while (reader.Read())
-        //            {
-        //                string categoryName = reader["CategoryName"].ToString();
-        //                ListItem item = new ListItem(categoryName);
-        //                itemcategory.Items.Add(item);
-        //            }
-
-        //            reader.Close();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        lblStatus.Text = "An error occurred while populating item categories dropdown: " + ex.Message;
-        //    }
-        //}
 
         [WebMethod]
         public static List<object> GetItemCategories()
@@ -157,17 +129,30 @@ namespace VMS_1
                         cmd.Parameters.AddWithValue("@QtyIssued", qtyissued[i]);
                         cmd.Parameters.AddWithValue("@Denomination", denomination[i]);
                         cmd.Parameters.AddWithValue("@Role", i < role.Length ? role[i] : role[0]);
-
                         cmd.ExecuteNonQuery();
+
+                        // Update PresentStockMaster table if ItemName exists
+                        SqlCommand updateCmd = new SqlCommand("UPDATE PresentStockMaster SET Qty = Qty - @Quantity WHERE ItemName = @ItemName", conn);
+                        updateCmd.Parameters.AddWithValue("@ItemName", itemname[i]);
+                        updateCmd.Parameters.AddWithValue("@Quantity", qtyissued[i]);
+                        updateCmd.Parameters.AddWithValue("@Denos", denomination[i]);
+                        updateCmd.ExecuteNonQuery();
+
+                        SqlCommand monthEndCmd = new SqlCommand("INSERT INTO MonthEndStockMaster (Date, ItemName, Qty, Type) VALUES (@Date, @ItemName, @Quantity, @Type)", conn);
+                        monthEndCmd.Parameters.AddWithValue("@Date", DateTime.Now); // Use current date
+                        monthEndCmd.Parameters.AddWithValue("@ItemName", itemname[i]);
+                        monthEndCmd.Parameters.AddWithValue("@Quantity", decimal.Parse(qtyissued[i]));
+                        monthEndCmd.Parameters.AddWithValue("@Type", "Issue");
+
+                        monthEndCmd.ExecuteNonQuery();
+
                     }
                 }
                 lblStatus.Text = "Data entered successfully.";
 
                 // Refresh the GridView after data insertion
-                BindGridView();
+                LoadGridView();
 
-                // Bind the total GridView after data insertion
-                BindTotalGridView((DataTable)ViewState["DataTable"]);
             }
             catch (Exception)
             {
@@ -176,60 +161,31 @@ namespace VMS_1
             }
         }
 
-        private void BindGridView()
+        protected void ddlMonth_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadGridView();
+        }
+
+        private void LoadGridView()
         {
             try
             {
-                string connStr = "Data Source=PIYUSH-JHA\\SQLEXPRESS;Initial Catalog=InsProj;Integrated Security=True;Encrypt=False";
-                string firstSubmittedDate = Request.Form.GetValues("date")[0];
-                DateTime dateTime = DateTime.Parse(firstSubmittedDate);
-                string monthFilter = dateTime.ToString("yyyy-MM");
-
-                string query = "SELECT * FROM IssueMaster WHERE CONVERT(VARCHAR(7), Date, 120) = @Month";
-
                 using (SqlConnection conn = new SqlConnection(connStr))
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@Month", monthFilter);
-
-                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                    SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM IssueMaster", conn);
                     DataTable dt = new DataTable();
-                    adapter.Fill(dt);
+                    da.Fill(dt);
 
-                    // Store DataTable in ViewState
-                    ViewState["DataTable"] = dt;
-
-
+                    GridViewIssue.DataSource = dt;
+                    GridViewIssue.DataBind();
                 }
             }
             catch (Exception ex)
             {
-                // Handle exceptions
-                lblStatus.Text = "An error occurred while fetching data: " + ex.Message;
+                lblStatus.Text = "An error occurred while binding the grid view: " + ex.Message;
             }
         }
-
-        private void BindTotalGridView(DataTable dt)
-        {
-            // Calculate totals for each column except "Date"
-            DataRow totalRow = dt.NewRow();
-            foreach (DataColumn column in dt.Columns)
-            {
-                if (column.DataType == typeof(int) && column.ColumnName != "Date")
-                {
-                    totalRow[column.ColumnName] = dt.Compute($"SUM([{column.ColumnName}])", "");
-                }
-            }
-
-            // Add the total row to the DataTable
-            dt.Rows.Add(totalRow);
-
-            // Bind the totals to the second GridView
-            //GridView2.DataSource = dt;
-            //GridView2.DataBind();
-        }
-
     }
 }

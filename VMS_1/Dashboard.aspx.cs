@@ -7,16 +7,215 @@ using OfficeOpenXml.Style;
 using System.Configuration;
 using System.Web.Security;
 using System.Web;
+using System.Web.UI.WebControls;
+using System.Threading;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace VMS_1
 {
     public partial class Dashboard : System.Web.UI.Page
     {
+        private DataTable dtMonthStock;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!HttpContext.Current.User.Identity.IsAuthenticated)
             {
                 FormsAuthentication.RedirectToLoginPage();
+            }
+            LoadGridViewPresentStock();
+            LoadGridViewPage2to7();
+            LoadGridViewMonthStock();
+            FilterDataByMonth(Convert.ToString(DateTime.Now.Month));
+        }
+
+        private void LoadGridViewMonthStock()
+        {
+            try
+            {
+                string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM MonthEndStockMaster", conn);
+                    dtMonthStock = new DataTable();
+                    da.Fill(dtMonthStock);
+
+                    GridViewMonthStock.DataSource = dtMonthStock;
+                    GridViewMonthStock.DataBind();
+                }
+            }
+            catch (Exception ex)
+            {
+                lblStatus.Text = "An error occurred while binding the grid view: " + ex.Message;
+            }
+        }
+
+        protected void GridViewMonthStock_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                int dateColumnIndex = 1;
+                foreach (DataControlField field in GridViewMonthStock.Columns)
+                {
+                    if (field.HeaderText == "Date") // Replace "Date" with the actual header text of your date column
+                    {
+                        dateColumnIndex = GridViewMonthStock.Columns.IndexOf(field);
+                        break;
+                    }
+                }
+
+                if (dateColumnIndex >= 0)
+                {
+                    string dateText = e.Row.Cells[dateColumnIndex].Text;
+                    if (!string.IsNullOrEmpty(dateText))
+                    {
+                        DateTime dateValue;
+                        if (DateTime.TryParse(dateText, out dateValue))
+                        {
+                            e.Row.Cells[dateColumnIndex].Text = dateValue.ToString("MMMM yyyy");
+                        }
+                    }
+                }
+
+                int typeColumnIndex = 4; 
+                string type = e.Row.Cells[typeColumnIndex].Text;
+                if (type == "Issue")
+                {
+                    e.Row.CssClass = "issue-row";
+                }
+            }
+        }
+
+        protected void btnFilter_Click(object sender, EventArgs e)
+        {
+            string selectedMonth = ddlMonths.SelectedValue;
+
+            DataTable filteredData = FilterDataByMonth(selectedMonth);
+
+            GridViewMonthStock.DataSource = filteredData;
+            GridViewMonthStock.DataBind();
+        }
+
+        private DataTable FilterDataByMonth(string month)
+        {
+            DataTable filteredData = dtMonthStock.Clone(); 
+            foreach (DataRow row in dtMonthStock.Rows)
+            {
+                DateTime dateValue;
+                if (DateTime.TryParse(row["Date"].ToString(), out dateValue))
+                {
+                    if (dateValue.Month == int.Parse(month))
+                    {
+                        filteredData.ImportRow(row);
+                    }
+                }
+            }
+
+            return filteredData;
+        }
+
+
+        private void LoadGridViewPresentStock()
+        {
+            try
+            {
+                string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM PresentStockMaster", conn);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    GridViewPresentStock.DataSource = dt;
+                    GridViewPresentStock.DataBind();
+                }
+            }
+            catch (Exception ex)
+            {
+                lblStatus.Text = "An error occurred while binding the grid view: " + ex.Message;
+            }
+        }
+
+        private void LoadGridViewPage2to7()
+        {
+            try
+            {
+                string connStr = ConfigurationManager.ConnectionStrings["InsProjConnectionString"].ConnectionString;
+                using (SqlConnection conn = new SqlConnection(connStr))
+                {
+                    conn.Open();
+
+                    SqlDataAdapter da = new SqlDataAdapter(@"SELECT 
+                                                PS.*
+                                            FROM 
+                                                PresentStockMaster PS 
+                                            LEFT JOIN 
+                                                IssueMaster ISM ON PS.ItemName = ISM.ItemName", conn);
+
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+
+                    GridViewP2to7.DataSource = dt;
+                    GridViewP2to7.DataBind();
+                }
+            }
+            catch (Exception ex)
+            {
+                lblStatus.Text = "An error occurred while binding the grid view: " + ex.Message;
+            }
+        }
+
+        protected void ExportPresentStockButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+                DataTable dt = new DataTable();
+                foreach (TableCell cell in GridViewPresentStock.HeaderRow.Cells)
+                {
+                    dt.Columns.Add(cell.Text);
+                }
+                foreach (GridViewRow row in GridViewPresentStock.Rows)
+                {
+                    DataRow dr = dt.NewRow();
+                    for (int i = 0; i < row.Cells.Count; i++)
+                    {
+                        dr[i] = row.Cells[i].Text;
+                    }
+                    dt.Rows.Add(dr);
+                }
+
+                using (ExcelPackage excelPackage = new ExcelPackage())
+                {
+                    ExcelWorksheet worksheet = excelPackage.Workbook.Worksheets.Add("PresentStock");
+                    worksheet.Cells["A1"].LoadFromDataTable(dt, true);
+
+                    // Save the file
+                    string fileName = $"PresentStock_{DateTime.Now.ToString("MMMM_yyyy")}.xlsx";
+                    FileInfo excelFile = new FileInfo(Server.MapPath($"~/{fileName}"));
+                    excelPackage.SaveAs(excelFile);
+
+                    // Provide download link
+                    Response.Clear();
+                    Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    Response.AddHeader("content-disposition", "attachment; filename=" + fileName);
+                    Response.TransmitFile(excelFile.FullName);
+                    Response.Flush();
+                    Response.End();
+                }
+            }
+            catch (ThreadAbortException)
+            {
+                // Catch the ThreadAbortException to prevent it from propagating
+                // This exception is expected when using Response.End()
+            }
+            catch (Exception ex)
+            {
+                lblStatus.Text = "An error occurred while exporting data: " + ex.Message;
             }
         }
 

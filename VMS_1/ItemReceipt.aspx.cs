@@ -118,6 +118,22 @@ namespace VMS_1
                         cmd.Parameters.AddWithValue("@Date", DateTime.Parse(dates[i]));
 
                         cmd.ExecuteNonQuery();
+
+                        // Update PresentStockMaster table if ItemName exists
+                        SqlCommand updateCmd = new SqlCommand("UPDATE PresentStockMaster SET Qty = Qty + @Quantity WHERE ItemName = @ItemName", conn);
+                        updateCmd.Parameters.AddWithValue("@ItemName", itemNames[i]);
+                        updateCmd.Parameters.AddWithValue("@Quantity", decimal.Parse(quantities[i]));
+                        updateCmd.Parameters.AddWithValue("@Denos", denominations[i]);
+
+                        updateCmd.ExecuteNonQuery();
+
+                        SqlCommand monthEndCmd = new SqlCommand("INSERT INTO MonthEndStockMaster (Date, ItemName, Qty, Type) VALUES (@Date, @ItemName, @Quantity, @Type)", conn);
+                        monthEndCmd.Parameters.AddWithValue("@Date", DateTime.Now); // Use current date
+                        monthEndCmd.Parameters.AddWithValue("@ItemName", itemNames[i]);
+                        monthEndCmd.Parameters.AddWithValue("@Quantity", decimal.Parse(quantities[i]));
+                        monthEndCmd.Parameters.AddWithValue("@Type", "Receipt"); // Set the correct parameter name for Type
+
+                        monthEndCmd.ExecuteNonQuery();
                     }
                 }
 

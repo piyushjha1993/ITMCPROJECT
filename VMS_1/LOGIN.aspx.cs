@@ -11,12 +11,18 @@ namespace VMS_1
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+
+            if (!IsPostBack)
+            {
+                FormsAuthentication.SignOut();
+            }
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
             Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
             Response.Cache.SetNoStore();
             Response.AppendHeader("Pragma", "no-cache");
             ValidationSettings.UnobtrusiveValidationMode = UnobtrusiveValidationMode.None;
         }
+
 
         protected void btnLogin_Click(object sender, EventArgs e)
         {

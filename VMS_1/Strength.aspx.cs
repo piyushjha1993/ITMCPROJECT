@@ -145,8 +145,8 @@ namespace VMS_1
             dt.Rows.Add(totalRow);
 
             // Bind the totals to the second GridView
-            GridView2.DataSource = dt;
-            GridView2.DataBind();
+            GridViewStrength.DataSource = dt;
+            GridViewStrength.DataBind();
         }
     }
 }

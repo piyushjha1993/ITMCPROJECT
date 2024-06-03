@@ -66,7 +66,7 @@
 
             </div>
             <div>
-                <asp:GridView ID="GridView2" runat="server" CssClass="table table-bordered table-striped">
+                <asp:GridView ID="GridViewStrength" runat="server" CssClass="table table-bordered table-striped">
                 </asp:GridView>
             </div>
         </form>
@@ -98,8 +98,9 @@
             }
         }
 
+        var rowSequence = 0;
         function addRow() {
-            var tableBody = document.getElementById("tableBody");
+            var tableBody = document.getElementById("MainContent_tableBody");
             var newRow = document.createElement("tr");
             newRow.innerHTML = `<td><input type="date" class="form-control" name="date" required /></td>
                                 <td><input type="number" class="form-control" name="vegOfficer" required min="0" /></td>

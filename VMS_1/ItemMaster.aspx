@@ -84,7 +84,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         function addAlternativeItem() {
-            var tableBody = document.getElementById("Table2");
+            var tableBody = document.getElementById("MainContent_Tbody1");
             var newRow = document.createElement("tr");
             newRow.innerHTML = `<td><input type="text" class="form-control" name="alternateitemname" /></td>
                                 <td><input type="number" class="form-control" name = "equivalentofficerScale" required min="0" step="0.001"/></td>

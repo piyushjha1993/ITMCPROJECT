@@ -1,12 +1,60 @@
 ﻿<%@ Page Title="Dashboard" Language="C#" AutoEventWireup="true" MasterPageFile="~/Site.Master" CodeBehind="Dashboard.aspx.cs" Inherits="VMS_1.Dashboard" %>
+
 <%@ Import Namespace="System.Web.Security" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+
+    <style>
+        .issue-row {
+            color: red;
+        }
+    </style>
     <form id="form1" runat="server">
+
         <div class="container">
-            <h2 class="mt-4">Dashboard</h2>
-            <p class="mt-4">&nbsp;</p>
-            <p class="mt-4">&nbsp;</p>
+            <h2>Month Stock</h2>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label" for="ddlMonths">Select Month:</label>
+                <div class="col-sm-4">
+                    <asp:DropDownList ID="ddlMonths" runat="server" CssClass="form-control">
+                        <asp:ListItem Text="January" Value="1"></asp:ListItem>
+                        <asp:ListItem Text="February" Value="2"></asp:ListItem>
+                        <asp:ListItem Text="March" Value="3"></asp:ListItem>
+                        <asp:ListItem Text="April" Value="4"></asp:ListItem>
+                        <asp:ListItem Text="May" Value="5"></asp:ListItem>
+                        <asp:ListItem Text="June" Value="6"></asp:ListItem>
+                        <asp:ListItem Text="July" Value="7"></asp:ListItem>
+                        <asp:ListItem Text="August" Value="8"></asp:ListItem>
+                        <asp:ListItem Text="September" Value="9"></asp:ListItem>
+                        <asp:ListItem Text="October" Value="10"></asp:ListItem>
+                        <asp:ListItem Text="November" Value="11"></asp:ListItem>
+                        <asp:ListItem Text="December" Value="12"></asp:ListItem>
+                    </asp:DropDownList>
+                </div>
+                <div class="col-sm-2">
+                    <asp:Button ID="Button1" runat="server" Text="Filter" CssClass="btn btn-primary" OnClick="btnFilter_Click" />
+                </div>
+            </div>
+            <br />
+            <asp:GridView ID="GridViewMonthStock" runat="server" CssClass="table table-bordered table-striped" OnRowDataBound="GridViewMonthStock_RowDataBound">
+            </asp:GridView>
+        </div>
+
+        <div class="container">
+            <h2>Page 2 To 7</h2>
+            <asp:GridView ID="GridViewP2to7" runat="server" CssClass="table table-bordered table-striped">
+            </asp:GridView>
+        </div>
+
+        <div class="container">
+            <h2>Present Stock</h2>
+            <asp:GridView ID="GridViewPresentStock" runat="server" CssClass="table table-bordered table-striped">
+            </asp:GridView>
+            <asp:Button ID="ExportPresentStockButton" runat="server" Text="Export Present Stock to Excel" OnClick="ExportPresentStockButton_Click" CssClass="btn btn-primary" />
+        </div>
+
+        <div class="container">
+            <h2 class="mt-4">Export Issue</h2>
             <div class="form-group">
                 <label for="monthYearPicker">Select Month and Year:</label>
                 <input type="month" id="monthYearPicker" runat="server" class="form-control date-picker" />

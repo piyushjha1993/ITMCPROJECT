@@ -83,12 +83,34 @@ namespace VMS_1
                     {
                         for (int i = 0; i < alternateItemNames.Length; i++)
                         {
-                            SqlCommand altItemCmd = new SqlCommand("INSERT INTO AlternateItem (AltItemName, AltRationScaleOfficer, AltRationScaleSailor, ItemID) VALUES (@AltItemName, @AltRationScaleOfficer, @AltRationScaleSailor, @ItemID)", conn);
-                            altItemCmd.Parameters.AddWithValue("@AltItemName", alternateItemNames[i]);
-                            altItemCmd.Parameters.Add("@AltRationScaleOfficer", SqlDbType.Decimal).Value = Convert.ToDecimal(equivalentOfficerScales[i]);
-                            altItemCmd.Parameters.Add("@AltRationScaleSailor", SqlDbType.Decimal).Value = Convert.ToDecimal(equivalentSailorScales[i]);
-                            altItemCmd.Parameters.AddWithValue("@ItemID", itemID);
-                            altItemCmd.ExecuteNonQuery();
+                            // Check if the alternate item already exists in PresentStockMaster
+                            SqlCommand checkCmd = new SqlCommand("SELECT COUNT(*) FROM PresentStockMaster WHERE ItemName = @AltItemName", conn);
+                            checkCmd.Parameters.AddWithValue("@AltItemName", alternateItemNames[i]);
+                            int Presentcount = (int)checkCmd.ExecuteScalar();
+
+                            SqlCommand checkCmdIssue = new SqlCommand("SELECT COUNT(*) FROM AlternateItem WHERE AltItemName = @AltItemName", conn);
+                            checkCmdIssue.Parameters.AddWithValue("@AltItemName", alternateItemNames[i]);
+                            int Issuecount = (int)checkCmd.ExecuteScalar();
+
+
+                            if (Presentcount == 0)
+                            {
+                                // Insert into PresentStockMaster if it doesn't exist
+                                SqlCommand insertCmd = new SqlCommand("INSERT INTO PresentStockMaster (ItemName, Qty) VALUES (@AltItemName, @Qty)", conn);
+                                insertCmd.Parameters.AddWithValue("@AltItemName", alternateItemNames[i]);
+                                insertCmd.Parameters.AddWithValue("@Qty", "0");
+                                insertCmd.ExecuteNonQuery();
+                            }
+
+                            if (Issuecount == 0)
+                            {
+                                SqlCommand altItemCmd = new SqlCommand("INSERT INTO AlternateItem (AltItemName, AltRationScaleOfficer, AltRationScaleSailor, ItemID) VALUES (@AltItemName, @AltRationScaleOfficer, @AltRationScaleSailor, @ItemID)", conn);
+                                altItemCmd.Parameters.AddWithValue("@AltItemName", alternateItemNames[i]);
+                                altItemCmd.Parameters.Add("@AltRationScaleOfficer", SqlDbType.Decimal).Value = Convert.ToDecimal(equivalentOfficerScales[i]);
+                                altItemCmd.Parameters.Add("@AltRationScaleSailor", SqlDbType.Decimal).Value = Convert.ToDecimal(equivalentSailorScales[i]);
+                                altItemCmd.Parameters.AddWithValue("@ItemID", itemID);
+                                altItemCmd.ExecuteNonQuery();
+                            }
                         }
                     }
                 }

@@ -2,46 +2,26 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <div class="container">
-<<<<<<< Updated upstream
-        <h1 class="mt-4">Victualling Management System</h1>
-    </div>
-    <div class="container">
-        <div>
-            <label for="userType">Select User Type:</label>
-            <select id="userType" onchange="toggleUserType()" class="form-control" style="width: 100px;">
-                <option value="officer" selected>Officer</option>
-                <option value="sailor">Sailor</option>
-            </select>
-        </div>
-=======
->>>>>>> Stashed changes
+
         <h2 class="mt-4">Issue Module - Officers</h2>
 
         <form id="issueForm" runat="server">
             <div>
                 <label for="userType">Select User Type:</label>
                 <select id="userType" onchange="toggleUserType()" name="userrole" class="form-control" style="width: 100px;">
-                    <option value="officer">Officer</option>
+                    <option value="officer" selected>Officer</option>
                     <option value="sailor">Sailor</option>
                 </select>
             </div>
             <input type="hidden" id="ScalAmount_Val" />
             <input type="hidden" id="ItemCategory_Val" />
-<<<<<<< Updated upstream
-            <input type="hidden" id="userRole" name="userrole" />
             <input type="hidden" id="entitledStrength" name="entitledstrength" />
-            <div class="text-right">
-=======
-           <%-- <div class="text-right">
->>>>>>> Stashed changes
-                <asp:LinkButton ID="DashboardButton" runat="server" Text="Go to Dashboard" CssClass="btn btn-info" PostBackUrl="~/Dashboard.aspx"></asp:LinkButton>
-            </div>--%>
             <div class="table-responsive">
                 <table class="table" id="issueTable">
                     <thead>
                         <tr>
                             <th class="heading date">Date</th>
-                            <th class="heading itemcategory">Item Category</th>
+                            <th class="heading category">Item Category</th>
                             <th class="heading itemname">Item Name</th>
                             <th class="heading issuedto">Enter Strength</th>
                             <th class="heading qtyentitled">Qty Entitled</th>
@@ -74,7 +54,7 @@
                                 <input type="text" class="form-control" name="Strength" />
                             </td>
                             <td>
-                                <input type="text" id="EntitledStrength" class="form-control" disabled></input>
+                                <input type="text" id="EntitledStrength" class="form-control" readonly />
                                 <%--<asp:Label ID="EntitledStrength" runat="server" Text="" class="form-control"></asp:Label>--%>
                             </td>
                             <td>
@@ -105,10 +85,32 @@
                 <h2 class="mt-4">Entered Data</h2>
             </div>
             <div>
-                <asp:GridView ID="GridView3" runat="server" CssClass="table table-bordered table-striped">
+                <label for="ddlMonth">Select Month:</label>
+                <asp:DropDownList ID="ddlMonth" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlMonth_SelectedIndexChanged">
+                    <asp:ListItem Text="January" Value="1"></asp:ListItem>
+                    <asp:ListItem Text="February" Value="2"></asp:ListItem>
+                    <asp:ListItem Text="March" Value="3"></asp:ListItem>
+                    <asp:ListItem Text="April" Value="4"></asp:ListItem>
+                    <asp:ListItem Text="May" Value="5"></asp:ListItem>
+                    <asp:ListItem Text="June" Value="6"></asp:ListItem>
+                    <asp:ListItem Text="July" Value="7"></asp:ListItem>
+                    <asp:ListItem Text="August" Value="8"></asp:ListItem>
+                    <asp:ListItem Text="September" Value="9"></asp:ListItem>
+                    <asp:ListItem Text="Octomber" Value="10"></asp:ListItem>
+                    <asp:ListItem Text="November" Value="11"></asp:ListItem>
+                    <asp:ListItem Text="December" Value="12"></asp:ListItem>
+                </asp:DropDownList>
+            </div>
+            <div>
+                <a class="btn" href="ExportIssueOfficerandSailor.aspx">Export Issue</a>
+            </div>
+            <div>
+                <asp:GridView ID="GridViewIssue" runat="server" CssClass="table table-bordered table-striped">
                 </asp:GridView>
             </div>
+
         </form>
+
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -117,6 +119,9 @@
     <script>
         $(document).ready(function () {
             fetchItemCategories();
+            //if ($('#userRole').val() == null || $('#userRole').val() == "") {
+            //    $('#userRole').val("officer")
+            //}
         });
         function toggleUserType() {
             var userType = document.getElementById("userType").value;
@@ -138,9 +143,9 @@
             if (!isNaN(strengthValue)) {
                 var entitledStrength = strengthValue * scaleAmount;
 
-                $(this).closest('tr').find('.EntitledStrength').text(entitledStrength);
+                $(this).closest('tr').find('.EntitledStrength').val(entitledStrength);
             } else {
-                $(this).closest('tr').find('.EntitledStrength').text('');
+                $(this).closest('tr').find('.EntitledStrength').val('');
             }
         });
 
@@ -163,7 +168,6 @@
                     document.getElementById('EntitledStrength' + '_' + rowSequence).textContent = entitledStrength;
                 }
             } else {
-                // If strengthValue is NaN, clear the content of the entitled strength element
                 document.getElementById('EntitledStrength').textContent = '';
             }
         });
@@ -193,16 +197,16 @@
         var rowSequence = 1;
 
         function addRow() {
-            var tableBody = document.getElementById("tableBody");
+            var tableBody = document.getElementById("MainContent_tableBody");
             var newRow = document.createElement("tr");
+
             var selectedDate = document.querySelector('input[type="date"][name="date"]').value;
             newRow.innerHTML = `
                             <td>
                                 <input type="date" class="form-control" name="date" value="${selectedDate}" disabled required />
                             </td>
                             <td>
-                                 <select class="form-control itemcategory" onchange="itemcategory_SelectedIndexChanged(this)" required disabled>
-                                    <option value="">Select</option>
+                                 <select class="form-control itemcategory" id="itemcategory_${rowSequence}" onchange="itemcategory_SelectedIndexChanged(this)" disabled required>
                                 </select>
                             </td>
                             <td>
@@ -214,7 +218,7 @@
                                 <input type="text" class="form-control strength-input" name="Strength" id="Strength_${rowSequence}" />
                             </td>
                             <td>
-                                <label class="form-control entitled_strength" id="EntitledStrength_${rowSequence}"></label>
+                                <input class="form-control entitled_strength" type="text" name="EntitledStrength" id="EntitledStrength_${rowSequence}" readonly />
                             </td>
                             <td>
                                 <input type="text" class="form-control" name="Qtyissued" id="Qtyissued_${rowSequence}" />
@@ -244,16 +248,18 @@
                     var entitledStrength = strengthValue * scaleAmount;
                     var entitledStrengthElement = document.getElementById(strengthID);
                     var int = rowSequence - 1;
-                    document.getElementById('EntitledStrength_' + int).textContent = entitledStrength;
+                    document.getElementById('EntitledStrength_' + int).value = entitledStrength;
                 } else {
-                    document.getElementById('EntitledStrength_' + rowSequence).textContent = '';
+                    document.getElementById('EntitledStrength_' + rowSequence).value = '';
                 }
             });
 
-
-            fetchItemCategories(newRow);
+            //fetchItemCategories();
+            //fetchItemCategories(newRow);
+            $("#itemcategory_" + rowSequence).append($('#itemcategory').html())
 
             var getCategory = $("#ItemCategory_Val").val();
+            $('.itemcategory').val(getCategory);
             fetchItemNames(getCategory, rowSequence);
 
             rowSequence++;
@@ -288,8 +294,39 @@
             }
         }
 
+        //function fetchItemCategories(row) {
+        //    fetch('IssueMaster.aspx/GetItemCategories', {
+        //        method: 'POST',
+        //        headers: {
+        //            'Content-Type': 'application/json'
+        //        }
+        //    })
+        //        .then(response => response.json())
+        //        .then(data => {
+        //            if (data.d && data.d.length) {
+        //                var itemSelect = row.querySelector('.itemcategory');
+
+        //                data.d.forEach(function (item) {
+        //                    var categoryVal = document.getElementById('ItemCategory_Val').value;
+        //                    var option = document.createElement('option');
+        //                    option.value = item.Value;
+        //                    option.textContent = item.Text;
+        //                    option.setAttribute('data-scaleamount', item.ScaleAmount);
+        //                    if (item.Value === categoryVal) {
+        //                        option.selected = true;
+        //                    }
+        //                    itemSelect.appendChild(option);
+
+        //                    scaleAmountsByCategory[item.Value] = parseFloat(item.ScaleAmount);
+        //                });
+        //            }
+        //        })
+        //        .catch(error => {
+        //            console.error('Error fetching item categories:', error);
+        //        });
+        //}
         var scaleAmountsByCategory = {};
-        function fetchItemCategories(row) {
+        function fetchItemCategories() {
             fetch('IssueMaster.aspx/GetItemCategories', {
                 method: 'POST',
                 headers: {
@@ -299,18 +336,18 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.d && data.d.length) {
-                        var itemSelect = row.querySelector('.itemcategory');
+
+                        var dropdown = document.getElementById('itemcategory');
+
+                        // Clear existing options
+                        dropdown.innerHTML = '<option value="">Select</option>';
 
                         data.d.forEach(function (item) {
-                            var categoryVal = document.getElementById('ItemCategory_Val').value;
                             var option = document.createElement('option');
                             option.value = item.Value;
                             option.textContent = item.Text;
                             option.setAttribute('data-scaleamount', item.ScaleAmount);
-                            if (item.Value === categoryVal) {
-                                option.selected = true;
-                            }
-                            itemSelect.appendChild(option);
+                            dropdown.appendChild(option);
 
                             scaleAmountsByCategory[item.Value] = parseFloat(item.ScaleAmount);
                         });
@@ -320,6 +357,7 @@
                     console.error('Error fetching item categories:', error);
                 });
         }
+
 
         function populateDropDown(data) {
             var dropdown = $('#itemcategory');

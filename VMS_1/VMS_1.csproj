@@ -243,17 +243,27 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Dashboard.aspx" />
+    <Content Include="Divers_ExtraIssue.aspx" />
+    <Content Include="ExportIssueOfficerandSailor.aspx" />
     <Content Include="ForgetPassword.aspx" />
     <Content Include="IssueMaster.aspx" />
     <Content Include="ItemMaster.aspx" />
     <Content Include="ItemReceipt.aspx" />
+    <Content Include="LeadPoisioning_ExtraIssue.aspx" />
+    <Content Include="LimeandSugar_ExtraIssue.aspx" />
+    <Content Include="LimeFresh_ExtraIssue.aspx" />
     <Content Include="LOGIN.aspx" />
+    <Content Include="MilkSugarandTea_ExtraIssue.aspx" />
+    <Content Include="PestControl_ExtraIssue.aspx" />
+    <Content Include="RationIssueOnPayment.aspx" />
     <Content Include="RationScale.aspx" />
     <Content Include="ResetPassword.aspx" />
     <Content Include="Strength.aspx" />
     <Content Include="UserRegister.aspx" />
+    <Content Include="Users.aspx" />
     <Content Include="Web.config" />
     <Content Include="wwwroot\css\bootstrap.min.css" />
+    <Content Include="wwwroot\css\style.css" />
     <Content Include="wwwroot\js\bootstrap.min.js" />
     <Content Include="wwwroot\js\jquery.min.js" />
   </ItemGroup>
@@ -264,6 +274,20 @@
     </Compile>
     <Compile Include="Dashboard.aspx.designer.cs">
       <DependentUpon>Dashboard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Divers_ExtraIssue.aspx.cs">
+      <DependentUpon>Divers_ExtraIssue.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Divers_ExtraIssue.aspx.designer.cs">
+      <DependentUpon>Divers_ExtraIssue.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ExportIssueOfficerandSailor.aspx.cs">
+      <DependentUpon>ExportIssueOfficerandSailor.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ExportIssueOfficerandSailor.aspx.designer.cs">
+      <DependentUpon>ExportIssueOfficerandSailor.aspx</DependentUpon>
     </Compile>
     <Compile Include="ForgetPassword.aspx.cs">
       <DependentUpon>ForgetPassword.aspx</DependentUpon>
@@ -293,6 +317,27 @@
     <Compile Include="ItemReceipt.aspx.designer.cs">
       <DependentUpon>ItemReceipt.aspx</DependentUpon>
     </Compile>
+    <Compile Include="LeadPoisioning_ExtraIssue.aspx.cs">
+      <DependentUpon>LeadPoisioning_ExtraIssue.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LeadPoisioning_ExtraIssue.aspx.designer.cs">
+      <DependentUpon>LeadPoisioning_ExtraIssue.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="LimeandSugar_ExtraIssue.aspx.cs">
+      <DependentUpon>LimeandSugar_ExtraIssue.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LimeandSugar_ExtraIssue.aspx.designer.cs">
+      <DependentUpon>LimeandSugar_ExtraIssue.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="LimeFresh_ExtraIssue.aspx.cs">
+      <DependentUpon>LimeFresh_ExtraIssue.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="LimeFresh_ExtraIssue.aspx.designer.cs">
+      <DependentUpon>LimeFresh_ExtraIssue.aspx</DependentUpon>
+    </Compile>
     <Compile Include="LOGIN.aspx.cs">
       <DependentUpon>LOGIN.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -300,7 +345,28 @@
     <Compile Include="LOGIN.aspx.designer.cs">
       <DependentUpon>LOGIN.aspx</DependentUpon>
     </Compile>
+    <Compile Include="MilkSugarandTea_ExtraIssue.aspx.cs">
+      <DependentUpon>MilkSugarandTea_ExtraIssue.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="MilkSugarandTea_ExtraIssue.aspx.designer.cs">
+      <DependentUpon>MilkSugarandTea_ExtraIssue.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="PestControl_ExtraIssue.aspx.cs">
+      <DependentUpon>PestControl_ExtraIssue.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PestControl_ExtraIssue.aspx.designer.cs">
+      <DependentUpon>PestControl_ExtraIssue.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RationIssueOnPayment.aspx.cs">
+      <DependentUpon>RationIssueOnPayment.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RationIssueOnPayment.aspx.designer.cs">
+      <DependentUpon>RationIssueOnPayment.aspx</DependentUpon>
+    </Compile>
     <Compile Include="RationScale.aspx.cs">
       <DependentUpon>RationScale.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -315,6 +381,13 @@
     <Compile Include="ResetPassword.aspx.designer.cs">
       <DependentUpon>ResetPassword.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Site.Master.cs">
+      <DependentUpon>Site.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Site.Master.designer.cs">
+      <DependentUpon>Site.Master</DependentUpon>
+    </Compile>
     <Compile Include="Strength.aspx.cs">
       <DependentUpon>Strength.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -328,6 +401,19 @@
     </Compile>
     <Compile Include="UserRegister.aspx.designer.cs">
       <DependentUpon>UserRegister.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Users.aspx.cs">
+      <DependentUpon>Users.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Users.aspx.designer.cs">
+      <DependentUpon>Users.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="wwwroot\css\style.css.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="wwwroot\css\style.css.designer.cs">
+      <DependentUpon>style.css.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
